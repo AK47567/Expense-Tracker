@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserData,Savings,Expenses,Category
+from .models import UserData, Account, Savings, Expenses, Category
 
 class UserData_serializer(serializers.ModelSerializer):
  
@@ -7,6 +7,16 @@ class UserData_serializer(serializers.ModelSerializer):
     class Meta:
         model = UserData
         fields = '__all__'
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        return {'account': data}
+
 
 class Savings_serializer(serializers.ModelSerializer):
     class Meta:

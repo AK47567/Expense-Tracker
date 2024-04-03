@@ -1,10 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.decorators import action
-from .models import UserData, Savings, Category, Expenses
+from .models import UserData, Savings, Category, Expenses, Account
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from .serialzers import UserData_serializer, Savings_serializer, CategorySerializer,Expense_serializer
+from .serialzers import UserData_serializer, Savings_serializer, CategorySerializer,Expense_serializer, AccountSerializer
 from .pagination import StandardResultspagination
 
 class UserData_viewset(viewsets.ModelViewSet):
@@ -60,11 +60,35 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
 
+class AccountViewSet(viewsets.ModelViewSet):
+    queryset = Account.objects.all()
+    serializer_class = AccountSerializer
+    lookup_field='account_number'
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+            
+        pk = self.kwargs.get('pk')
+        if pk is not None:
+            obj = get_object_or_404(queryset, pk=pk)
+            self.check_object_permissions(self.request, obj)
+            return obj
+        else:
+            return None
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+        
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
 class ExpensesViewSet(viewsets.ModelViewSet):
     queryset = Expenses.objects.all()
     serializer_class = Expense_serializer
     pagination_class=StandardResultspagination
-    
 
     def create(self, request, *args, **kwargs):
         category_id = request.data.get('category', [])

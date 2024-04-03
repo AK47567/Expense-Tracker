@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserData_viewset, SavingsViewSet, ExpensesViewSet, CategoryViewSet
+from .views import UserData_viewset, SavingsViewSet, ExpensesViewSet, CategoryViewSet, AccountViewSet
 
 urlpatterns = [
     path('userdata/', UserData_viewset.as_view({'get': 'list', 'post': 'create'}), name='userdata-list'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('expenses/<int:pk>/', ExpensesViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='expenses-detail'),
     path('category/', CategoryViewSet.as_view({'get': 'list', 'post': 'create'}), name='category-list'),
     path('category/<int:pk>/', CategoryViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='category-detail'),
+    path('accounts/', AccountViewSet.as_view({'get': 'list', 'post': 'create', 'patch': 'partial_update', 'delete': 'destroy'}), name='account-detail'),
 ]
